@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="com.moominland.readie" android:versionCode="1" android:versionName="1.0">
-    <uses-permission android:name="android.permission.VIBRATE"/>
+	package="com.moominland.readie" android:versionCode="1"
+	android:versionName="1.0">
+	<uses-permission android:name="android.permission.VIBRATE" />
 	<uses-permission android:name="android.permission.NFC" />
 	<uses-sdk android:minSdkVersion="10" />
 	<uses-feature android:name="android.hardware.nfc"
@@ -9,13 +10,18 @@
 
 	<application android:icon="@drawable/icon" android:label="@string/app_name"
 		android:theme="@android:style/Theme.NoTitleBar">
-		<activity android:name=".ListTags" android:label="@string/app_name" android:configChanges="keyboardHidden|orientation">
+		<activity android:name=".ListTags" android:label="@string/app_name"
+			android:configChanges="keyboardHidden|orientation">
 			<intent-filter>
-				<action android:name="android.nfc.action.TECH_DISCOVERED" />
+				<action android:name="android.nfc.action.NDEF_DISCOVERED" />
+ 				<data android:mimeType="text/foo" />
 				<category android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
-			<meta-data android:name="android.nfc.action.TECH_DISCOVERED"
-					android:resource="@xml/supported_tag_formats" />
+
+			<!-- <intent-filter> <action and roid:name="andr  oid.nfc.action.TECH_DISCOVERED" 
+				/> <category android:name=" " /> </intent-filter> 
+				<meta-data android:name="android.nfc.ac tion.TECH_DISCOVERED" android:resource="@xml/supported_tag_formats" 
+				/> -->
 
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />

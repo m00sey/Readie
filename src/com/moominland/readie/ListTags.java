@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.IntentFilter.MalformedMimeTypeException;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.IsoDep;
@@ -34,6 +35,7 @@ public class ListTags extends Activity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		Log.d(TAG, "create " + getIntent().getAction());
 		super.onCreate(savedInstanceState);
 		textview = new TextView(this);
 		textview.setText("Scan a tag");
@@ -41,11 +43,20 @@ public class ListTags extends Activity {
 
 		nfcAdapter = NfcAdapter.getDefaultAdapter(this);
 		pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this,
-				getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+				getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP|Intent.FLAG_ACTIVITY_CLEAR_TOP), 0);
+//				getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 
+		IntentFilter ndefFilter = new IntentFilter(
+				NfcAdapter.ACTION_NDEF_DISCOVERED);
+		try {
+			ndefFilter.addDataType("text/foo");
+		} catch (MalformedMimeTypeException e) {
+			Log.e(TAG,"MalformedMimeTypeException setting mime type");
+		}
+		
 		IntentFilter techFilter = new IntentFilter(
 				NfcAdapter.ACTION_TECH_DISCOVERED);
-		intentFilters = new IntentFilter[] { techFilter };
+		intentFilters = new IntentFilter[] { ndefFilter, techFilter };
 
 		techLists = new String[][] { { MifareClassic.class.getName() },
 				{ MifareUltralight.class.getName() },
@@ -58,13 +69,20 @@ public class ListTags extends Activity {
 	@Override
 	public void onResume() {
 		super.onResume();
+		Log.i(TAG, "**** RESUME");
+//		Log.i(TAG, getIntent().getAction());
 		nfcAdapter.enableForegroundDispatch(this, pendingIntent, intentFilters,
 				techLists);
 		String action = getIntent().getAction();
-		Log.i(TAG, action);
-		if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(action)) {
+//		if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(action)) {
+//			Log.i(TAG, "Action detected");
+//			updateTagDetailsFromIntent(getIntent());
+//		}
+		
+		if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(action)) {
 			Log.i(TAG, "Action detected");
 			updateTagDetailsFromIntent(getIntent());
+			setIntent(new Intent());
 		}
 	}
 
@@ -77,6 +95,7 @@ public class ListTags extends Activity {
 	@Override
 	public void onPause() {
 		super.onPause();
+		Log.d(TAG, "pasuing " + getIntent().getAction());
 		nfcAdapter.disableForegroundDispatch(this);
 	}
 
