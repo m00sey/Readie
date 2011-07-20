@@ -43,7 +43,7 @@ public class ListTags extends Activity {
 
 		nfcAdapter = NfcAdapter.getDefaultAdapter(this);
 		pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this,
-				getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP|Intent.FLAG_ACTIVITY_CLEAR_TOP), 0);
+				getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 //				getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 
 		IntentFilter ndefFilter = new IntentFilter(
@@ -70,9 +70,10 @@ public class ListTags extends Activity {
 	public void onResume() {
 		super.onResume();
 		Log.i(TAG, "**** RESUME");
-//		Log.i(TAG, getIntent().getAction());
 		nfcAdapter.enableForegroundDispatch(this, pendingIntent, intentFilters,
 				techLists);
+		Log.i(TAG, getIntent().getAction());
+
 		String action = getIntent().getAction();
 //		if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(action)) {
 //			Log.i(TAG, "Action detected");
@@ -82,7 +83,7 @@ public class ListTags extends Activity {
 		if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(action)) {
 			Log.i(TAG, "Action detected");
 			updateTagDetailsFromIntent(getIntent());
-			setIntent(new Intent());
+//			setIntent(new Intent());
 		}
 	}
 
