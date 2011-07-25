@@ -18,11 +18,6 @@
 				<category android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
 
-			<!-- <intent-filter> <action and roid:name="andr  oid.nfc.action.TECH_DISCOVERED" 
-				/> <category android:name=" " /> </intent-filter> 
-				<meta-data android:name="android.nfc.ac tion.TECH_DISCOVERED" android:resource="@xml/supported_tag_formats" 
-				/> -->
-
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
