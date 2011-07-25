@@ -2,17 +2,17 @@ package com.moominland.readie;
 
 import android.app.Activity;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentFilter.MalformedMimeTypeException;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.os.Bundle;
-import android.os.Vibrator;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.text.MessageFormat;
 
 public class ListTags extends Activity {
 
@@ -35,7 +35,7 @@ public class ListTags extends Activity {
 
 		nfcAdapter = NfcAdapter.getDefaultAdapter(ListTags.this);
 		pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this,
-				getClass()).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+				getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 
 		IntentFilter ndefFilter = new IntentFilter(
 				NfcAdapter.ACTION_NDEF_DISCOVERED);
@@ -55,7 +55,7 @@ public class ListTags extends Activity {
 	@Override
 	public void onResume() {
 		super.onResume();
-		Log.i(TAG, "resumed " + pendingIntent + " " + intentFilters + " " + techLists);
+		Log.i(TAG, MessageFormat.format("resumed {0} {1} {2}", pendingIntent, intentFilters, techLists));
         for (IntentFilter intentFilter : intentFilters) {
             Log.d(TAG, "actions " + intentFilter.getAction(0));
             Log.d(TAG, "data type " + intentFilter.getDataType(0));
@@ -90,8 +90,6 @@ public class ListTags extends Activity {
 
 	private void updateTagDetailsFromIntent() {
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
-            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-            v.vibrate(100);
             Toast.makeText(this, "Scanned tag", Toast.LENGTH_SHORT).show();
 
             Tag detectedTag = getIntent().getParcelableExtra(NfcAdapter.EXTRA_TAG);
@@ -106,6 +104,7 @@ public class ListTags extends Activity {
                 Log.i(TAG, s);
             }
             textview.append(techs);
+
             //we've processed this intent, lets remove it.
             Log.i(TAG, "clearing intent");
             setIntent(new Intent());
