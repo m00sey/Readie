@@ -107,6 +107,7 @@ public class ListTags extends Activity {
             }
             textview.append(techs);
             //we've processed this intent, lets remove it.
+            Log.i(TAG, "clearing intent");
             setIntent(new Intent());
         }
 	}
