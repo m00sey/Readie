@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Vibrator;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ListTags extends Activity {
 
@@ -26,8 +27,8 @@ public class ListTags extends Activity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		Log.d(TAG, "create " + getIntent().getAction());
 		super.onCreate(savedInstanceState);
+        Log.d(TAG, "create " + getIntent().getAction());
 		textview = new TextView(this);
 		textview.setText("Scan a tag");
 		setContentView(textview);
@@ -45,6 +46,10 @@ public class ListTags extends Activity {
 		}
 
 		intentFilters = new IntentFilter[] { ndefFilter };
+
+        if (getIntent() != null) {
+            updateTagDetailsFromIntent();
+        }
     }
 
 	@Override
@@ -84,22 +89,25 @@ public class ListTags extends Activity {
 	}
 
 	private void updateTagDetailsFromIntent() {
-		Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-		v.vibrate(100);
-		
-		Tag detectedTag = getIntent().getParcelableExtra(NfcAdapter.EXTRA_TAG);
-		
-		textview.setText("");
-		textview.setText("Discovered tag supporting the following tech:\n");
-		
-		String techs = "";
-		
-		for (String s : detectedTag.getTechList()) {
-			techs += (s + "\n");
-			Log.i(TAG, s);
-		}
-		textview.append(techs);
-        //we've processed this intent, lets remove it.
-        setIntent(new Intent());
+        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
+            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            v.vibrate(100);
+            Toast.makeText(this, "Scanned tag", Toast.LENGTH_SHORT).show();
+
+            Tag detectedTag = getIntent().getParcelableExtra(NfcAdapter.EXTRA_TAG);
+
+            textview.setText("");
+            textview.setText("Discovered tag supporting the following tech:\n");
+
+            String techs = "";
+
+            for (String s : detectedTag.getTechList()) {
+                techs += (s + "\n");
+                Log.i(TAG, s);
+            }
+            textview.append(techs);
+            //we've processed this intent, lets remove it.
+            setIntent(new Intent());
+        }
 	}
 }
