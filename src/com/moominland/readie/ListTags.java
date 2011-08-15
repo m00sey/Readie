@@ -25,7 +25,7 @@ public class ListTags extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "create " + getIntent().getAction());
+        Log.d(TAG, "onCreate");
         textview = new TextView(this);
         textview.setText("Scan a tag");
         setContentView(textview);
@@ -41,11 +41,29 @@ public class ListTags extends Activity {
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy");
+    }
+
+    @Override
+    public void onStart() {
+        super.onDestroy();
+        Log.d(TAG, "onStart");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop");
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG, "resuming " + getIntent());
+        Log.d(TAG, "onResume");
         nfcAdapter = NfcAdapter.getDefaultAdapter(ListTags.this);
-        PendingIntent pendingIntent = createPendingResult(1000, new Intent(this, getClass()), PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = createPendingResult(1000, new Intent(), 0);
 
         IntentFilter ndefFilter = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
 
@@ -67,7 +85,7 @@ public class ListTags extends Activity {
 
     @Override
     public void onNewIntent(Intent intent) {
-        Log.i(TAG, "new intent");
+        Log.i(TAG, "onNewIntent");
         /**
          * http://developer.android.com/reference/android/app/Activity.html#onNewIntent(android.content.Intent)
          * Note that getIntent() still returns the original Intent.
@@ -80,10 +98,13 @@ public class ListTags extends Activity {
     @Override
     public void onPause() {
         super.onPause();
+        Log.d(TAG, "onPause");
         nfcAdapter.disableForegroundDispatch(this);
     }
 
     private void updateTagDetailsFromIntent() {
+        Log.d(TAG, "reading tag");
+        Log.d(TAG, getIntent().toString());
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
             textview.setText("");
             Parcelable[] rawData = getIntent().getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
